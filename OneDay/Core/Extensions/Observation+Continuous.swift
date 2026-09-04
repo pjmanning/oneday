@@ -49,13 +49,13 @@ final class ObservationToken: @unchecked Sendable {
 
     var isCancelled: Bool {
         lock.lock()
-        defer { lock.unlock()
+        defer { lock.unlock() }
         return cancelled
     }
 
     func cancel() {
         lock.lock()
-        defer { lock.unlock()
+        defer { lock.unlock() }
         cancelled = true
     }
 }
