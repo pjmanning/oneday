@@ -1,9 +1,5 @@
 import Foundation
 
-#if canImport(PostHog) && FEATURE_ANALYTICS
-import PostHog
-#endif
-
 /// PostHog, behind a facade so call sites stay one line and provider-agnostic.
 ///
 /// This is a cross-cutting service rather than a feature module: it is called
