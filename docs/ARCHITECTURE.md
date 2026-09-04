@@ -3,7 +3,7 @@
 ## The whole system
 
 ```
-                      ┌──────────────────────────────────────────────────────┐
+                      ┌───────────────────────────────────────────┐
                       │              iOS app (SwiftUI)            │
                       │                                           │
                       │  App/       RootRouter · AppEnvironment   │
@@ -11,15 +11,15 @@
                       │             Profile Settings Billing      │
                       │  Core/      DesignSystem                  │
                       │  Services/  ← the only SDK imports        │
-                      └───────────────────────────────────────────────────────┘
+                      └───┬───────────┬──────────┬────────────┬───┘
                           │           │          │            │
               Clerk SDK   │           │ Convex   │ RevenueCat │ WKWebView
               (sign in)   │           │ WebSocket│ StoreKit 2 │
                           ▼           ▼          ▼            ▼
-                    ┌──────────┐  ┌────────┐  ┌────────┐  ┌───────────┐
+                    ┌──────────┐  ┌────────┐  ┌────────┐  ┌────────────┐
                     │  Clerk   │  │ Convex │  │Revenue │  │ FeatureBase│
                     │          │─▶│        │  │  Cat   │  │   portal   │
-                    └──────────┘  └────────┘  └────────┘  └───────────┘
+                    └──────────┘  └───┬────┘  └───┬────┘  └────────────┘
                        JWT (aud:      │           │         (web only —
                        "convex")      │ actions   │          no iOS SDK)
                                       ▼           ▼
