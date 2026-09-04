@@ -1,0 +1,58 @@
+---
+description: Module boundaries, feature flags and navigation for the SwiftUI Template kit
+globs: ["SwiftUITemplate/**/*.swift"]
+alwaysApply: true
+---
+
+# Architecture
+
+Full contract in `AGENTS.md`. The parts you will trip over:
+
+## Dependency direction
+
+```
+Features/  →  Services/, Core/, App/
+Services/  →  Core/          (and its own SDK)
+Core/      →  nothing
+```
+
+- A feature **must not** import or reference a sibling feature, except by
+  embedding that feature's entry view inside `#if FEATURE_OTHER` — one line.
+  `ProfileView` → `BillingSummarySection` is the only instance in the kit.
+- A feature **must not** import a third-party SDK. Go through `Services/`.
+
+## Feature flags are compile-time
+
+`FEATURE_FLAGS` in `Config/Base.xcconfig` → `SWIFT_ACTIVE_COMPILATION_CONDITIONS`.
+`App/FeatureFlags.swift` mirrors them as booleans.
+
+When you reference something owned by another module, guard it:
+
+```swift
+#if FEATURE_BILLING
+BillingSummarySection()
+#endif
+```
+
+Removing a token + deleting the folder must still compile. If your change would
+break that, restructure it.
+
+## Navigation
+
+`RootRouter` owns the top-level destination (`launch / onboarding / auth /
+paywall / main`). Screens call `router.completeOnboarding()`,
+`router.markPaywallSeen()`, `router.isPresentingPaywall = true` — they never
+present another feature's root themselves.
+
+Within a tab, use `NavigationStack` + `NavigationLink` freely.
+
+## Adding files
+
+The Xcode project uses synchronized folders. Create the file under
+`SwiftUITemplate/` and it builds. **Never hand-edit `project.pbxproj`.**
+
+## Configuration
+
+`AppConfig` is the only reader of `Bundle.main`. It returns `nil` for anything
+still `REPLACE_ME`. Services must disable themselves and surface
+`SetupRequiredView` / `SetupRequiredRow` — never crash, never `fatalError`.

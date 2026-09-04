@@ -1,0 +1,56 @@
+---
+description: Liquid Glass and iOS 26 design rules
+globs: ["SwiftUITemplate/**/*.swift"]
+alwaysApply: true
+---
+
+# Liquid Glass
+
+Following Apple's *Adopting Liquid Glass* and WWDC25 "Build a SwiftUI app with
+the new design". Target is iOS 26+ with **no** legacy fallback path.
+
+## Get it from the system first
+
+`TabView` + `Tab`, `NavigationStack` toolbars, `.sheet`, `.alert`, `Menu`,
+`List`/`Form` already render as Liquid Glass on iOS 26. Use them and add
+nothing. Most screens in this kit contain zero glass code.
+
+## When you write custom glass
+
+Only for the **floating / navigation layer**: a floating action bar, a paywall
+CTA, a compose button. `Core/DesignSystem/GlassActionBar.swift` is the kit's
+implementation — reuse it rather than writing `.glassEffect` inline.
+
+```swift
+GlassEffectContainer(spacing: 12) {
+    HStack(spacing: 12) {
+        GlassCapsuleButton(title: "Upgrade") { }
+        GlassCircleButton(systemImage: "plus", accessibilityLabel: "Add") { }
+    }
+}
+```
+
+- `.glassEffect(_:in:)` for custom shapes; `.buttonStyle(.glass)` /
+  `.glassProminent` for buttons.
+- `.interactive()` on the primary control.
+- Group related shapes in one `GlassEffectContainer` so they blend and morph
+  together. Two separate containers side by side is a bug.
+
+## Never
+
+- **Glass on content.** List rows, cards, form sections, sheets full of text —
+  all opaque. Use `Color(.secondarySystemGroupedBackground)`.
+- **Glass on glass.** Whatever sits behind a glass control must be solid, or the
+  material samples itself and turns to mud.
+- Hard opaque overlays that defeat Reduce Transparency or Increase Contrast.
+- `UIDesignRequiresCompatibility` — we ship the new design, not the old look.
+- iOS 17–25 `if #available` design branches.
+
+## Colour and type
+
+- One brand token: `AccentColor` in the asset catalog. Everything else is a
+  semantic system colour so both appearances and accessibility settings work.
+- System text styles only (`.headline`, `.subheadline`, …) — never a fixed
+  point size for body copy. Dynamic Type must work.
+- Spacing from `Theme.Spacing`, radii from `Theme.Radius`.
+- Verify light **and** dark. The design system has no third mode.

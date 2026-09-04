@@ -1,0 +1,54 @@
+---
+description: Convex backend conventions — validators, auth checks, actions
+globs: ["convex/**/*.ts"]
+alwaysApply: true
+---
+
+# Convex
+
+## Every public function
+
+1. Declares an `args` validator — `args: {}` when it takes nothing.
+2. Declares a `returns` validator — `v.null()` when it returns nothing.
+3. Calls `ctx.auth.getUserIdentity()` first if it touches user data, and handles
+   `null` deliberately.
+
+```ts
+export const list = query({
+  args: {},
+  returns: v.array(demoItem),
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) return [];
+    return await ctx.db
+      .query("demoItems")
+      .withIndex("by_owner", (q) => q.eq("ownerSubject", identity.subject))
+      .order("desc")
+      .take(50);
+  },
+});
+```
+
+## Rules
+
+- Key user data off `identity.subject`. Never email — those change.
+- Queries throw on unauthenticated only when a UI error is the right outcome.
+  Subscriptions the client holds across sign-out (like `demoItems:list`) return
+  an empty result instead, or the app shows a spurious alert.
+- Use `.withIndex()`, never `.filter()` on a large table. Add the index to
+  `schema.ts`.
+- Mutations verify ownership before `patch`/`delete`, and return the same "not
+  found" message for missing and forbidden so callers can't probe for ids.
+- **Only actions** may call third-party APIs. Add `"use node"` at the top of the
+  file when you need an npm package with Node APIs (`convex/stripe.ts`), and
+  remember a `"use node"` file may contain actions only.
+- Anything a client must not be able to choose goes in an `internalQuery` /
+  `internalMutation`, called via `ctx.runQuery(internal.module.fn, …)`.
+- Secrets come from `process.env`, set with `npx convex env set`. Never inline,
+  never in the iOS app.
+- Throw `Error` with a message a user could act on — it reaches the UI.
+
+## Workflow
+
+`npx convex dev` while developing (it regenerates `convex/_generated/`).
+Do not run `npx convex deploy` unless the task is explicitly about production.

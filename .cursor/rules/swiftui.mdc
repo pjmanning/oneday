@@ -1,0 +1,53 @@
+---
+description: SwiftUI, concurrency and Swift style for iOS 26+
+globs: ["SwiftUITemplate/**/*.swift"]
+alwaysApply: true
+---
+
+# SwiftUI & Swift style
+
+Target is **iOS 26+**, Swift 6 language mode, strict concurrency.
+
+## Observation and state
+
+- State objects are `@MainActor @Observable final class`. No `ObservableObject`,
+  no `@Published`, no `@StateObject`.
+- View-owned models: `@State private var model = SomeViewModel()`.
+- Injected services: `@Environment(AuthService.self) private var auth`.
+- Need a binding to an `@Observable` from the environment? `@Bindable var x = x`
+  at the top of `body`.
+
+## Concurrency
+
+- `async`/`await` throughout. No completion handlers in app code; wrap an SDK's
+  callback API with `withCheckedContinuation` inside `Services/`.
+- Combine appears once, in `BackendService.observeAuthState`, because
+  ConvexMobile publishes auth state that way. Do not spread it.
+- Long-lived subscriptions run in `.task { }` so they cancel on disappear.
+- Catch `CancellationError` separately and stay silent — it means the view went
+  away, not that something failed.
+
+## Views
+
+- Prefer many small `private var`/`private func` view builders over one long
+  `body`.
+- Screen structs get a `Feature/` folder; shared primitives go in
+  `Core/DesignSystem`.
+- Use `LocalizedStringKey` for user-facing text (plain string literals in
+  `Text` / `Label` already are).
+- Put `accessibilityIdentifier` on every interactive control, named
+  `screen.control` (`paywall.purchase`, `settings.signOut`). Agents and UI tests
+  depend on these.
+- `ContentUnavailableView` for empty and error states, not a hand-rolled VStack.
+
+## Errors
+
+- Never force-unwrap. `guard let` / `if let`, or an explicit fallback.
+- No `try!`, no `as!`, no `fatalError` outside genuinely impossible states.
+- Catch blocks call `ErrorReporting.capture(error, context: "where.what")`.
+- Log with `Log.<category>` from `Core/Extensions/Log.swift`. Never `print`.
+
+## Formatting
+
+- 4-space indent, no trailing whitespace, `// MARK: -` between sections.
+- Comments explain *why*. Skip the ones that restate the next line.
