@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>$(APP_DISPLAY_NAME)</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+
+	<!-- Clerk's OAuth flow returns to the app through this scheme. -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+			</array>
+		</dict>
+	</array>
+
+	<!-- SwiftUI launch screen. No storyboard: the colour comes from the asset
+	     catalog (Resources/Assets.xcassets/LaunchBackground.colorset). -->
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UIColorName</key>
+		<string>LaunchBackground</string>
+	</dict>
+
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>arm64</string>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+
+	<!-- Every value the app reads from Config/*.xcconfig is funnelled through
+	     this one dictionary. AppConfig.swift is the only reader. -->
+	<key>STConfig</key>
+	<dict>
+		<key>ClerkPublishableKey</key>
+		<string>$(CLERK_PUBLISHABLE_KEY)</string>
+		<key>ConvexDeploymentURL</key>
+		<string>$(CONVEX_DEPLOYMENT_URL)</string>
+		<key>RevenueCatAPIKey</key>
+		<string>$(REVENUECAT_API_KEY)</string>
+		<key>PostHogAPIKey</key>
+		<string>$(POSTHOG_API_KEY)</string>
+		<key>PostHogHost</key>
+		<string>$(POSTHOG_HOST)</string>
+		<key>SentryDSN</key>
+		<string>$(SENTRY_DSN)</string>
+		<key>OneSignalAppID</key>
+		<string>$(ONESIGNAL_APP_ID)</string>
+		<key>FeatureBasePortalURL</key>
+		<string>$(FEATUREBASE_PORTAL_URL)</string>
+		<key>FeatureBaseChangelogURL</key>
+		<string>$(FEATUREBASE_CHANGELOG_URL)</string>
+		<key>PrivacyPolicyURL</key>
+		<string>$(PRIVACY_POLICY_URL)</string>
+		<key>TermsURL</key>
+		<string>$(TERMS_URL)</string>
+		<key>SupportEmail</key>
+		<string>$(SUPPORT_EMAIL)</string>
+	</dict>
+</dict>
+</plist>

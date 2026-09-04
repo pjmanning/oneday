@@ -1,0 +1,20 @@
+{
+  "name": "oneday-convex",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Convex backend for the OneDay iOS app.",
+  "scripts": {
+    "dev": "convex dev",
+    "typecheck": "tsc -p convex/tsconfig.json --noEmit",
+    "logs": "convex logs",
+    "dashboard": "convex dashboard",
+    "verify": "bash Scripts/verify-oneday.sh"
+  },
+  "dependencies": {
+    "convex": "^1.43.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.2",
+    "typescript": "^5.6.0"
+  }
+}

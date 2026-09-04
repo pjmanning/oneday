@@ -1,0 +1,113 @@
+// Base.xcconfig — every build setting for the app target lives here.
+//
+// IMPORTANT xcconfig gotcha: two consecutive forward slashes start a comment,
+// so a literal "https://host" would be truncated to "https:". Build URLs with
+// $(SLASH)$(SLASH) instead. This is why the URL placeholders below look odd.
+SLASH = /
+
+// ---------------------------------------------------------------------------
+// App identity — Scripts/rename.sh rewrites these two lines.
+// ---------------------------------------------------------------------------
+APP_DISPLAY_NAME = OneDay
+APP_BUNDLE_ID = com.pjmanning.oneday
+
+// Your Apple Developer Team ID. Leave empty to build for the simulator only;
+// set it in Config/Secrets.xcconfig (not here) to run on device.
+DEVELOPMENT_TEAM =
+
+// ---------------------------------------------------------------------------
+// Secrets — placeholders only. Real values go in Config/Secrets.xcconfig,
+// which is gitignored and included at the bottom of this file.
+// Anything still set to REPLACE_ME fails loudly at runtime via AppConfig.
+// ---------------------------------------------------------------------------
+CLERK_PUBLISHABLE_KEY = REPLACE_ME
+CONVEX_DEPLOYMENT_URL = REPLACE_ME
+REVENUECAT_API_KEY = REPLACE_ME
+POSTHOG_API_KEY = REPLACE_ME
+POSTHOG_HOST = https:$(SLASH)$(SLASH)us.i.posthog.com
+SENTRY_DSN = REPLACE_ME
+ONESIGNAL_APP_ID = REPLACE_ME
+FEATUREBASE_PORTAL_URL = REPLACE_ME
+FEATUREBASE_CHANGELOG_URL = REPLACE_ME
+
+// Legal / support links surfaced in Settings.
+PRIVACY_POLICY_URL = https:$(SLASH)$(SLASH)oneday.app/privacy
+TERMS_URL = https:$(SLASH)$(SLASH)oneday.app/terms
+SUPPORT_EMAIL = hello@oneday.app
+
+// ---------------------------------------------------------------------------
+// Product / SDK
+// ---------------------------------------------------------------------------
+PRODUCT_NAME = $(TARGET_NAME)
+PRODUCT_BUNDLE_IDENTIFIER = $(APP_BUNDLE_ID)
+MARKETING_VERSION = 1.0.0
+CURRENT_PROJECT_VERSION = 1
+
+SDKROOT = iphoneos
+IPHONEOS_DEPLOYMENT_TARGET = 26.0
+// iPhone only. Set to "1,2" to add iPad — but check your layouts on an iPad
+// simulator first, and budget for iPad screenshots and iPad review in App Store
+// Connect. Config/Info.plist already carries the iPad orientation keys.
+TARGETED_DEVICE_FAMILY = 1
+SUPPORTED_PLATFORMS = iphoneos iphonesimulator
+SUPPORTS_MACCATALYST = NO
+SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO
+
+// ConvexMobile's simulator slice is arm64 only, so an x86_64 simulator build
+// fails to link. Apple Silicon only for the simulator — device builds are
+// unaffected. Drop this line if you ever need to build on an Intel Mac and
+// have replaced the Convex client.
+EXCLUDED_ARCHS[sdk=iphonesimulator*] = x86_64
+
+INFOPLIST_FILE = Config/Info.plist
+CODE_SIGN_ENTITLEMENTS = Config/OneDay.entitlements
+CODE_SIGN_STYLE = Automatic
+
+ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon
+ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor
+
+// Required. Several SDKs (OneSignal, Sentry) ship as dynamic frameworks that
+// get embedded in the app bundle; without this the app builds fine and then
+// dies at launch with "Library not loaded: @rpath/....framework".
+LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/Frameworks @loader_path/Frameworks
+
+// ---------------------------------------------------------------------------
+// Feature modules — THE toggle switch for the whole kit.
+//
+// Delete a token below and every reference to that module disappears at compile
+// time, so you can then delete OneDay/Features/<Name>/ and still build.
+// App/FeatureFlags.swift mirrors these as booleans for runtime branching.
+// ---------------------------------------------------------------------------
+FEATURE_FLAGS = FEATURE_ONBOARDING FEATURE_AUTH FEATURE_HOME FEATURE_PROFILE FEATURE_SETTINGS FEATURE_ANALYTICS FEATURE_ERROR_REPORTING
+
+// ---------------------------------------------------------------------------
+// Swift
+// ---------------------------------------------------------------------------
+SWIFT_VERSION = 6.0
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) $(FEATURE_FLAGS)
+SWIFT_EMIT_LOC_STRINGS = YES
+ENABLE_USER_SCRIPT_SANDBOXING = YES
+ENABLE_MODULE_VERIFIER = NO
+CLANG_ENABLE_MODULES = YES
+ALWAYS_SEARCH_USER_PATHS = NO
+DEAD_CODE_STRIPPING = YES
+ENABLE_HARDENED_RUNTIME = NO
+
+// Liquid Glass: do NOT set UIDesignRequiresCompatibility. We ship the new design.
+
+// ---------------------------------------------------------------------------
+// Warnings — the template treats sloppiness as a build problem.
+// ---------------------------------------------------------------------------
+GCC_WARN_UNDECLARED_SELECTOR = YES
+GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE
+GCC_WARN_UNUSED_FUNCTION = YES
+GCC_WARN_UNUSED_VARIABLE = YES
+CLANG_WARN_DOCUMENTATION_COMMENTS = YES
+CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE
+
+// ---------------------------------------------------------------------------
+// Local overrides. Copy Config/Secrets.example.xcconfig to
+// Config/Secrets.xcconfig and fill it in. The "?" makes the include optional,
+// so a fresh clone still builds with placeholder values.
+// ---------------------------------------------------------------------------
+#include? "Secrets.xcconfig"
