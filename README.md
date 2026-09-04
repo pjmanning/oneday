@@ -63,6 +63,12 @@ xcodebuild -project OneDay.xcodeproj -scheme OneDay \
   -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build
 ```
 
+Cloud Agent bootstrap:
+
+```bash
+./Scripts/cloud-agent-install.sh
+```
+
 ## Layout
 
 ```
@@ -79,5 +85,24 @@ Config/                 Base.xcconfig, Secrets.example.xcconfig
 
 ## Repos
 
-- GitHub: https://github.com/pjmanning/oneday
-- Origin: create/mirror as `pjmanning/oneday` (see agent report)
+- **Browse:** https://cursor.com/codebase/pjmanning/oneday (Private — change in settings)
+- **Origin:** `pjmanning/oneday` — `origin repo clone pjmanning/oneday`
+- **GitHub:** https://github.com/pjmanning/oneday (mirror; app icon PNG may be missing)
+- Template seed: https://github.com/pjmanning/swiftuitemplate-ios
+
+### Clone with Origin CLI
+
+```bash
+curl -fsSL https://downloads.cursor.com/origin/install.sh | sh
+origin auth login
+origin repo clone pjmanning/oneday
+```
+
+If `origin` is not found after install:
+
+```bash
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+Docs: https://cursor.com/docs/origin/cli
